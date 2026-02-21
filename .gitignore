@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-ssr
+*.local
+.firebase
+.env
+.env.local
+.env.*.local
+dev-sw.js
+sw.js
+workbox-*.js

@@ -1,0 +1,42 @@
+:root {
+  --bg: #000000;
+  --text: #00FF41;
+  --system: #00BFFF;
+  --warn: #FF4444;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+  overflow: hidden;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background-color: var(--text);
+  animation: blink 1s step-start infinite;
+  vertical-align: text-bottom;
+}
