@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from './firebase'
+import { UserProvider, useUser } from './context/UserContext'
 import Login from './pages/Login'
 import Terminal from './pages/Terminal'
 
@@ -10,26 +8,20 @@ function LoadingScreen() {
     <div style={{
       height: '100%',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      gap: '1rem',
       backgroundColor: 'var(--bg)'
     }}>
+      <p style={{ color: 'var(--text)' }}>CONNECTING...</p>
       <span className="cursor" />
     </div>
   )
 }
 
-export default function App() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      setLoading(false)
-    })
-    return unsubscribe
-  }, [])
+function AppRoutes() {
+  const { user, loading } = useUser()
 
   if (loading) return <LoadingScreen />
 
@@ -50,5 +42,13 @@ export default function App() {
         />
       </Routes>
     </BrowserRouter>
+  )
+}
+
+export default function App() {
+  return (
+    <UserProvider>
+      <AppRoutes />
+    </UserProvider>
   )
 }
