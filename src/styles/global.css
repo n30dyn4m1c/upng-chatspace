@@ -122,3 +122,7 @@ body {
 .terminal-input input::placeholder {
   color: #00663a;
 }
+
+.terminal-input--flash {
+  border: 1px solid var(--warn);
+}
