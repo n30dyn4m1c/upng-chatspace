@@ -8,11 +8,17 @@ import {
   orderBy,
   limit,
   onSnapshot,
+  getDocs,
+  runTransaction,
+  doc,
   Timestamp,
-  serverTimestamp
+  serverTimestamp,
+  arrayUnion,
+  increment
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { useUser } from '../context/UserContext'
+import { parseCommand } from '../utils/commandParser'
 
 interface Message {
   id: string
@@ -30,6 +36,13 @@ interface SystemMessage {
   text: string
   timestamp: Date
   type: 'system'
+}
+
+interface LocalMessage {
+  id: string
+  text: string
+  timestamp: number
+  type: 'system' | 'error'
 }
 
 const MAX_CHARS = 140
@@ -58,6 +71,7 @@ export default function Terminal() {
   const [messages, setMessages] = useState<Message[]>([])
   const [systemMessages, setSystemMessages] = useState<SystemMessage[]>([])
   const [input, setInput] = useState('')
+  const [localMessages, setLocalMessages] = useState<LocalMessage[]>([])
   const [rateLimited, setRateLimited] = useState(false)
   const [ttlDisplay, setTtlDisplay] = useState('--:--')
   const feedEndRef = useRef<HTMLDivElement>(null)
@@ -72,7 +86,7 @@ export default function Terminal() {
   // Auto-scroll on new messages
   useEffect(() => {
     feedEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, systemMessages])
+  }, [messages, systemMessages, localMessages])
 
   // Real-time Firestore listener
   useEffect(() => {
